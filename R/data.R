@@ -4,7 +4,7 @@
 #' Acute myeloid leukaemia (AML) is a type of cancer that starts in the blood-forming cells of the bone marrow.
 #' While in adults it is the most common type of leukaemia, it is much rarer in children, accounting for
 #' 15-20\% percent of paediatric leukaemia cases, which translates to 8 cases per year for every million children
-#' under the age of 15.
+#' under the age of 15 years.
 #'
 #' Minimal residual disease (MRD) is the percentage of cancer cells that remain in a person
 #' either during or after treatment when the patient is in remission (no symptoms or signs of disease). MRD aids
@@ -27,8 +27,8 @@
 #'
 #' \tabular{ll}{
 #' id: \tab Patient identifier \cr
-#' met: \tab Method to quantify MRD \cr
-#' rep: \tab Replicate \cr
+#' met: \tab Method to quantify MRD (PCR or FCM) \cr
+#' rep: \tab Replicate (1 = first, 2 = second) \cr
 #' mrd: \tab MRD (\%) \cr
 #' }
 #'

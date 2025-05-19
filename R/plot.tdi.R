@@ -12,11 +12,11 @@
 #'
 #' @param x input object of class \code{tdi} resulting from a call of the function \code{\link[TDIagree]{TDI}}.
 #' @param tdi logical indicating whether the \eqn{\pm}TDI estimate(s) should be added to the plot as solid lines. \cr
-#'            Default is \code{FALSE}.
-#' @param ub logical indicating whether the \eqn{\pm}UB estimate(s) should be added to the plot as a dashed lines. \cr
-#'           Default is \code{FALSE}.
+#'            The default value is \code{FALSE}.
+#' @param ub logical indicating whether the \eqn{\pm}UB estimate(s) should be added to the plot as dashed lines. \cr
+#'           The default value is \code{FALSE}.
 #' @param loa logical indicating whether the LoA should be added to the plot as dotted lines. \cr
-#'            Default is \code{FALSE}.
+#'            The default value is \code{FALSE}.
 #' @param method name of the method(s) for which the TDI or the UB estimates will be added to the plot. If both \code{tdi} and \code{ub}
 #'               are set to \code{FALSE}, this argument is ignored. This argument is not case-sensitive and is passed to \code{\link[base]{match.arg}}. \cr
 #'               The default value, \code{NULL}, indicates that, for the measures specified, all the methods for which the TDI (and/or UB) has been
@@ -29,8 +29,8 @@
 #'          are to be added to the plot. If both \code{tdi} and \code{ub} are set to \code{FALSE}, this argument is ignored. \cr
 #'          The default value, \code{NULL}, indicates that only the first proportion passed to the call of the function \code{\link[TDIagree]{TDI}}
 #'          is to be considered.
-#' @param loess logic indicating whether a smooth curve computed by \code{\link[stats]{loess}} should be added to the plot as a dotdashed curve. \cr
-#'              Default is \code{FALSE}.
+#' @param loess logical indicating whether a smooth curve computed by \code{\link[stats]{loess.smooth}} should be added to the plot as a dotdashed curve. \cr
+#'              The default value is \code{FALSE}.
 #' @param method.col colour palette to be used in the drawing of TDIs and/or UBs. A colour should be indicated for every method asked. It is assumed that the colours
 #'                   are passed in the same order as the methods passed to \code{method}. If both \code{tdi} and \code{ub} are set to \code{FALSE},
 #'                   this argument is ignored. \cr
@@ -38,20 +38,22 @@
 #'                   \code{"#f3df6c"}, \code{"#9c964a"}, \code{"#f4b5bd"} and \code{"#85d4e3"} corresponding to the options
 #'                   \code{"Choudhary P"}, \code{"Escaramis et al."}, \code{"Choudhary NP"} and \code{"Perez-Jaume and Carrasco"} of \code{method}, respectively.
 #' @param loa.col colour to be used in the drawing of the LoA. If \code{loa} is set to \code{FALSE}, this argument is ignored. \cr
-#'                Default is \code{"#c27d38"}.
+#'                The default value is \code{"#c27d38"}.
 #' @param loess.col colour to be used in the drawing of the loess smooth curve. If \code{loess} is set to \code{FALSE}, this argument is ignored. \cr
-#'                Default is \code{"#cd2c35"}.
+#'                The default value is \code{"#cd2c35"}.
+#' @param loess.span smoothness parameter for \code{\link[stats]{loess.smooth}}. \cr
+#'                   The default value is 2/3.
 #' @param legend logical indicating whether a legend should be added outside the plot. If all \code{tdi}, \code{ub} and \code{loa}
 #'               are set to \code{FALSE}, this argument is ignored. \cr
-#'               Default is \code{FALSE}.
+#'               The default value is \code{FALSE}.
 #' @param inset specifies how far the legend is inset from the plot margins (to be passed to \code{inset} argument in \code{\link[graphics]{legend}}). \cr
-#'              Default is \code{c(-0.25, 0)}, recommended for 24'' screens with default plot window. For 13'' screens, \code{c(-0.34, 0)} is recommended.
+#'              The default value is \code{c(-0.25, 0)}, recommended for 24'' screens with default plot window. For 13'' screens, \code{c(-0.34, 0)} is recommended.
 #' @param main overall title for the plot (to be passed to \code{main} argument in \code{\link[base]{plot}}). \cr
-#'             Default is \code{"Bland-Altman plot"}.
+#'             The default value is \code{"Bland-Altman plot"}.
 #' @param xlab a label for the x-axis (to be passed to \code{xlab} argument in \code{\link[base]{plot}}). \cr
-#'             Default is \code{"Mean"}.
+#'             The default value is \code{"Mean"}.
 #' @param ylab a label for the y-axis (to be passed to \code{ylab} argument in \code{\link[base]{plot}}). \cr
-#'             Default is \code{"Difference"}.
+#'             The default value is \code{"Difference"}.
 #' @param xlim the x limits of the plot (to be passed to \code{xlim} argument in \code{\link[base]{plot}}). \cr
 #'             The default value, \code{NULL}, indicates that the range of the mean values should be used.
 #' @param ylim the y limits of the plot (to be passed to \code{ylim} argument in \code{\link[base]{plot}}). \cr
@@ -72,28 +74,42 @@
 #'
 #' @examples
 #' # normal data
+#'
 #' set.seed(2025)
 #'
 #' n <- 100
-#' y_A1 <- rnorm(n, 50, 10) # rater A, replicate 1
-#' y_A2 <- rnorm(n, 50, 10) # rater A, replicate 2
-#' y_B1 <- rnorm(n, 30, 15) # rater B, replicate 1
-#' y_B2 <- rnorm(n, 30, 15) # rater B, replicate 2
 #'
-#' ex_data <- data.frame(y = c(y_A1, y_A2, y_B1, y_B2), rater = factor(rep(c("A", "B"), each = 2*n)),
-#'                       replicate = factor(rep(rep(1:2, each = n), 2)), subj = factor(rep(1:n, 4)))
+#' mu.ind <- rnorm(n, 0, 7)
+#'
+#' epsA1 <- rnorm(n, 0, 3)
+#' epsA2 <- rnorm(n, 0, 3)
+#' epsB1 <- rnorm(n, 0, 3)
+#' epsB2 <- rnorm(n, 0, 3)
+#'
+#' y_A1 <- 50 + mu.ind + epsA1 # rater A, replicate 1
+#' y_A2 <- 50 + mu.ind + epsA2 # rater A, replicate 2
+#' y_B1 <- 40 + mu.ind + epsB1 # rater B, replicate 1
+#' y_B2 <- 40 + mu.ind + epsB2 # rater B, replicate 2
+#'
+#' ex_data <- data.frame(y = c(y_A1, y_A2, y_B1, y_B2),
+#'                       rater = factor(rep(c("A", "B"), each = 2*n)),
+#'                       replicate = factor(rep(rep(1:2, each = n), 2)),
+#'                       subj = factor(rep(1:n, 4)))
 #'
 #' tdi <- TDI(ex_data, y, subj, rater, replicate, p = c(0.8, 0.9),
 #'            method = c("Choudhary P", "Escaramis et al.",
 #'                       "Choudhary NP", "Perez-Jaume and Carrasco"),
-#'            R = 1000)
+#'            boot.type = "cluster", R = 1000)
 #' plot(tdi)
 #'
 #' # enhance plot
-#' plot(tdi, xlim = c(10, 70), ylim = c(-60, 80), pch = 16, tdi = TRUE, ub = TRUE,
-#'      method = c("es", "pe"), ub.pc = "b_cb", loa = TRUE, loa.col = "red", legend = TRUE)
+#' plot(tdi, xlim = c(20, 70), ylim = c(-20, 30), tdi = TRUE, ub = TRUE,
+#'      method = c("es", "pe"), ub.pc = "b_cb", loa = TRUE, loa.col = "red",
+#'      legend = TRUE)
+#'
 #'
 #' # non-normal data
+#'
 #' tdi.aml <- TDI(AMLad, mrd, id, met, rep, p = c(0.85, 0.95), boot.type = "cluster",
 #'                dec.est = 4, R = 1000)
 #' plot(tdi.aml)
@@ -114,7 +130,8 @@
 
 plot.tdi <- function(x, tdi = FALSE, ub = FALSE, loa = FALSE, method = NULL,
                      ub.pc = NULL, p = NULL, loess = FALSE,
-                     method.col = NULL, loa.col = "#c27d38", loess.col = "#cd2c35",
+                     method.col = NULL, loa.col = "#c27d38",
+                     loess.col = "#cd2c35", loess.span = 2/3,
                      legend = FALSE, inset = c(-0.24, 0), main = "Bland-Altman plot",
                      xlab = "Mean", ylab = "Difference", xlim = NULL, ylim = NULL, ...) {
 
@@ -154,6 +171,9 @@ plot.tdi <- function(x, tdi = FALSE, ub = FALSE, loa = FALSE, method = NULL,
     if (!isColor(loess.col)) {
       stop("'loess.col' must only contain a valid colour")
     }
+  }
+  if (!is.numeric(loess.span)) {
+    stop("'loess.span' must be numeric")
   }
   if (!is.null(p) & !is.numeric(p)) {
     stop("'p' must be NULL or numeric")
@@ -429,9 +449,9 @@ plot.tdi <- function(x, tdi = FALSE, ub = FALSE, loa = FALSE, method = NULL,
       legend.lty <- c(legend.lty, 3)
     }
 
-    # add horizontal dotdashed curve for loess
+    # add dotdashed curve for loess
     if (loess) {
-      lines(loess.smooth(m, d), col = loess.col, lty = 4)
+      lines(loess.smooth(m, d, span = loess.span), col = loess.col, lty = 4)
       legend.legend <- c(legend.legend, "LOESS")
       legend.col <- c(legend.col, loess.col)
       legend.lty <- c(legend.lty, 4)
@@ -495,7 +515,7 @@ plot.tdi <- function(x, tdi = FALSE, ub = FALSE, loa = FALSE, method = NULL,
 
     # add horizontal dotdashed curve for loess
     if (loess) {
-      lines(loess.smooth(m, d), col = loess.col, lty = 4)
+      lines(loess.smooth(m, d, span = loess.span), col = loess.col, lty = 4)
     }
   }
 }

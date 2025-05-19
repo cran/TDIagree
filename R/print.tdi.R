@@ -9,24 +9,37 @@
 #'
 #' @examples
 #' # normal data
+#'
 #' set.seed(2025)
 #'
 #' n <- 100
-#' y_A1 <- rnorm(n, 50, 10) # rater A, replicate 1
-#' y_A2 <- rnorm(n, 50, 10) # rater A, replicate 2
-#' y_B1 <- rnorm(n, 30, 15) # rater B, replicate 1
-#' y_B2 <- rnorm(n, 30, 15) # rater B, replicate 2
 #'
-#' ex_data <- data.frame(y = c(y_A1, y_A2, y_B1, y_B2), rater = factor(rep(c("A", "B"), each = 2*n)),
-#'                       replicate = factor(rep(rep(1:2, each = n), 2)), subj = factor(rep(1:n, 4)))
+#' mu.ind <- rnorm(n, 0, 7)
+#'
+#' epsA1 <- rnorm(n, 0, 3)
+#' epsA2 <- rnorm(n, 0, 3)
+#' epsB1 <- rnorm(n, 0, 3)
+#' epsB2 <- rnorm(n, 0, 3)
+#'
+#' y_A1 <- 50 + mu.ind + epsA1 # rater A, replicate 1
+#' y_A2 <- 50 + mu.ind + epsA2 # rater A, replicate 2
+#' y_B1 <- 40 + mu.ind + epsB1 # rater B, replicate 1
+#' y_B2 <- 40 + mu.ind + epsB2 # rater B, replicate 2
+#'
+#' ex_data <- data.frame(y = c(y_A1, y_A2, y_B1, y_B2),
+#'                       rater = factor(rep(c("A", "B"), each = 2*n)),
+#'                       replicate = factor(rep(rep(1:2, each = n), 2)),
+#'                       subj = factor(rep(1:n, 4)))
 #'
 #' tdi <- TDI(ex_data, y, subj, rater, replicate, p = c(0.8, 0.9),
 #'            method = c("Choudhary P", "Escaramis et al.",
 #'                       "Choudhary NP", "Perez-Jaume and Carrasco"),
-#'            R = 1000)
+#'            boot.type = "cluster", R = 1000)
 #' tdi
 #'
+#'
 #' # non-normal data
+#'
 #' tdi.aml <- TDI(AMLad, mrd, id, met, rep, p = c(0.85, 0.95), boot.type = "cluster",
 #'                dec.est = 4, R = 1000)
 #' tdi.aml
